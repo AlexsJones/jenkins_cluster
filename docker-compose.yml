@@ -1,0 +1,22 @@
+version: '2'
+services:
+  jenkins_master:
+    build: ./jenkins_master
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_master/jenkins_mount:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock                                                                                                                               
+      - ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2:/var/lib/docker         
+      - $SSH_AUTH_SOCK:/ssh-agent 
+
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
+  jenkins_slave:
+    build: ./jenkins_slave  
+    links: 
+      - jenkins_master
+    depends_on:
+      - jenkins_master
+  
